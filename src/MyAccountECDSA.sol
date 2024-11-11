@@ -6,16 +6,13 @@ import {ERC4337Utils} from "@openzeppelin/contracts/account/utils/draft-ERC4337U
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import {AccountBase} from "./unreleased/draft-AccountBase.sol";
 import {ERC7739Signer, EIP712} from "@openzeppelin/community-contracts/utils/cryptography/draft-ERC7739Signer.sol";
+import {Clones} from "@openzeppelin/contracts/proxy/Clones.sol";
 
 contract MyAccountECDSA is ERC7739Signer, AccountBase {
-    address private immutable _signer;
-
-    constructor(address signerAddr) EIP712("MyAccountECDSA", "1") {
-        _signer = signerAddr;
-    }
+    constructor() EIP712("MyAccountECDSA", "1") {}
 
     function signer() public view virtual returns (address) {
-        return _signer;
+        return abi.decode(Clones.fetchCloneArgs(address(this)), (address));
     }
 
     function _validateUserOp(

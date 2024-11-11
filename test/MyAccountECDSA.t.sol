@@ -5,10 +5,12 @@ import {Test, console} from "forge-std/Test.sol";
 import {PackedUserOperation} from "@openzeppelin/contracts/interfaces/draft-IERC4337.sol";
 import {ERC4337Utils} from "@openzeppelin/contracts/account/utils/draft-ERC4337Utils.sol";
 import {MyAccountECDSA} from "../src/MyAccountECDSA.sol";
+import {MyAccountECDSAFactory} from "../src/MyAccountECDSAFactory.sol";
 import {ERC7739Utils} from "@openzeppelin/community-contracts/utils/cryptography/draft-ERC7739Utils.sol";
 import {MessageHashUtils} from "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
 
 contract MyAccountECDSATest is Test {
+    MyAccountECDSAFactory public myFactory = new MyAccountECDSAFactory();
     MyAccountECDSA public myAccount;
     address alice;
     uint256 privateKey;
@@ -20,7 +22,7 @@ contract MyAccountECDSATest is Test {
 
     function setUp() public {
         (alice, privateKey) = makeAddrAndKey("alice");
-        myAccount = new MyAccountECDSA(alice);
+        myAccount = MyAccountECDSA(payable(myFactory.clone(alice, bytes32(0))));
     }
 
     function test_validateUserOp(
